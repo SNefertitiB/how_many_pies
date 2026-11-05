@@ -1,34 +1,121 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>How Many Pies?</title>
+    <!-- Link to external CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
 <body>
-  <h1>How Many Pies?</h1>
-  <p>Number of people: </p> <p id="num_people"></p>
-  <p></p>
-  <input id="input_people" type="int" placeholder="8">
-  <p>Slices per person: </p> <p id="slices_per_person"></p>
-  <p>Slices per pie: </p> <p id="slices_per_pie"></p>
-  <p>Number of pies: </p> <p id="pies"></p>
+    <h1>How Many Pies?</h1>
+        
+    <div class="tab">
+      <button class="tablinks" onclick="openTab(event, 'Default')">Default</button>
+      <button class="tablinks" onclick="openTab(event, 'Custom')">Custom</button>
+    </div>
+    
+    <div id="Default" class="tabcontent">
+      <h3>Default</h3>
+      
+      <h4>How many people are you feeding?</h4>
+      <input id="input_people" type="number" min="1" placeholder="4">
+      <p>Assuming 1.5 slices per person and 8 slices per pizza:</p>
+      <h3>You'll need <span id="pies"> </span> pie(s)</h3>
+      
+    </div>
 
-<script>
+    <div id="Custom" class="tabcontent">
+      <h3>Custom</h3>
+      
+      <div class="row">
+          <label for="inputCustomPeople">People: </label>
+          <input type="number"
+              min="1"
+              id="inputCustomPeople"
+              name="inputCustomPeople"
+              placeholder="4">
+      </div>
+      
+      <div class="row">
+          <label for="inputCustomSlicesPerPerson">Slices per person: </label>
+          <input type="number"
+              min="0.5"
+              id="inputCustomSlicesPerPerson"
+              name="inputCustomSlicesPerPerson"
+              placeholder="1.5">
+      </div>
+      
+      <div class="row">
+          <label for="inputCustomSlicesPerPie">Slices per pie: </label>
+          <input type="number"
+              min="1"
+              id="inputCustomSlicesPerPie"
+              name="inputCustomSlicesPerPie"
+              placeholder="8">
+      </div>
 
-  let people;
+      <h3>You'll need <span id="customPies"> </span> pie(s)</h3>
+      
+    </div>
+    
+    <script>
+        const defaultPeople = 4;
+        const defaultSlicesPerPerson = 1.5;
+        const defaultSlicesPerPie = 8;
 
-  const input_people = document.getElementById("input_people");
-  input_people.addEventListener("change", function (event) {
-    document.getElementById("num_people").innerHTML = event.text;
-  });
+        const input_people = document.getElementById("input_people");
 
-  
-  slice_per_person = 2;
-  document.getElementById("slices_per_person").innerHTML = slice_per_person;
-  
-  slice_per_pie = 8;
-  document.getElementById("slices_per_pie").innerHTML = slice_per_pie;
-  
-  pies = (people * slice_per_person) / slice_per_pie;
-  document.getElementById("pies").innerHTML = Math.ceil(pies);
+        const inputCustomPeople = document.getElementById("inputCustomPeople");
+        const inputCustomSlicesPerPerson = document.getElementById("inputCustomSlicesPerPerson");
+        const inputCustomSlicesPerPie = document.getElementById("inputCustomSlicesPerPie");
+        
+        function readNumber(input, fallback) {
+            const n = parseFloat(input.value);
+            return Number.isFinite(n) && n > 0 ? n : fallback;
+        }
+        
+        function calcPies(people, slicesPerPerson, slicesPerPie) {
+            return Math.ceil((people * slicesPerPerson) / slicesPerPie);
+        }
+        
+        function updateDefault(){
+            const people = readNumber(input_people, defaultPeople);
+            document.getElementById("pies").textContent = calcPies(people, defaultSlicesPerPerson, defaultSlicesPerPie);
+        }
 
-</script>
+        function updateCustom(){
+            const people = readNumber(inputCustomPeople, defaultPeople);
+            const slicesPerPerson = readNumber(inputCustomSlicesPerPerson, defaultSlicesPerPerson);
+            const slicesPerPie = readNumber(inputCustomSlicesPerPie, defaultSlicesPerPie);
+            document.getElementById("customPies").textContent = calcPies(people, slicesPerPerson, slicesPerPie);
+
+        }
+        
+        input_people.addEventListener("input", updateDefault);
+        inputCustomPeople.addEventListener("input", updateCustom);
+        inputCustomSlicesPerPerson.addEventListener("input", updateCustom);
+        inputCustomSlicesPerPie.addEventListener("input", updateCustom);
+
+    
+        function openTab(evt, tabName) {
+          var i, tabcontent, tablinks;
+          tabcontent = document.getElementsByClassName("tabcontent");
+          for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+          }
+          tablinks = document.getElementsByClassName("tablinks");
+          for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+          }
+          document.getElementById(tabName).style.display = "block";
+          evt.currentTarget.className += " active";
+        };
+        
+        // Initial values and open the first tab
+        updateDefault();
+        updateCustom();
+        document.querySelector(".tablinks").click();
+    </script>
 
 </body>
 </html>
